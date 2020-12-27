@@ -4,11 +4,22 @@ import (
 	"testing"
 )
 
+type testCase struct {
+	operator string
+	want     CIntstruction
+}
+
+func (tC *testCase) Run(t *testing.T) {
+	t.Run(tC.operator, func(t *testing.T) {
+		actual := ParseCInstrunction(tC.operator)
+		if *actual != tC.want {
+			t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
+		}
+	})
+}
+
 func TestParseCInstructionRegular(t *testing.T) {
-	testCases := []struct {
-		operator string
-		want     CIntstruction
-	}{
+	testCases := []testCase{
 		{
 			operator: "0",
 			want:     CIntstruction{Comp: "0"},
@@ -40,20 +51,12 @@ func TestParseCInstructionRegular(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		t.Run(tC.operator, func(t *testing.T) {
-			actual := ParseCInstrunction(tC.operator)
-			if *actual != tC.want {
-				t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
-			}
-		})
+		tC.Run(t)
 	}
 }
 
 func TestParseCInstructionSpaces(t *testing.T) {
-	testCases := []struct {
-		operator string
-		want     CIntstruction
-	}{
+	testCases := []testCase{
 		{
 			operator: "   D",
 			want:     CIntstruction{Comp: "D"},
@@ -78,20 +81,12 @@ func TestParseCInstructionSpaces(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		t.Run(tC.operator, func(t *testing.T) {
-			actual := ParseCInstrunction(tC.operator)
-			if *actual != tC.want {
-				t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
-			}
-		})
+		tC.Run(t)
 	}
 }
 
 func TestParseCInstructionComment(t *testing.T) {
-	testCases := []struct {
-		operator string
-		want     CIntstruction
-	}{
+	testCases := []testCase{
 		{
 			operator: "D \t // Comment ",
 			want:     CIntstruction{Comp: "D"},
@@ -107,12 +102,6 @@ func TestParseCInstructionComment(t *testing.T) {
 	}
 
 	for _, tC := range testCases {
-		t.Run(tC.operator, func(t *testing.T) {
-			actual := ParseCInstrunction(tC.operator)
-
-			if *actual != tC.want {
-				t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
-			}
-		})
+		tC.Run(t)
 	}
 }
