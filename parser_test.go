@@ -11,7 +11,10 @@ type testCase struct {
 
 func (tC *testCase) Run(t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
-		actual := ParseCInstrunction(tC.operator)
+		actual, err := ParseCInstrunction(tC.operator)
+		if err != nil {
+			t.Errorf("Exception from function: %w", err)
+		}
 		if *actual != tC.want {
 			t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
 		}

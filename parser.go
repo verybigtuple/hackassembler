@@ -19,7 +19,7 @@ type CIntstruction struct {
 }
 
 // ParseCInstrunction returns pointer to a CInstruction struct parsed from a string line
-func ParseCInstrunction(input string) *CIntstruction {
+func ParseCInstrunction(input string) (*CIntstruction, error) {
 	ci := CIntstruction{}
 	b := strings.Builder{}
 	b.Grow(3)
@@ -45,5 +45,6 @@ Loop:
 	if b.Len() > 0 {
 		*expectedPart = b.String()
 	}
-	return &ci
+
+	return &ci, nil
 }
