@@ -29,9 +29,14 @@ type CIntstruction struct {
 	Jump string
 }
 
+type RuneReadSeeker interface {
+	io.RuneReader
+	io.Seeker
+}
+
 type Parser struct {
 	cInstr     CIntstruction
-	rReader    io.RuneReader
+	rReader    RuneReadSeeker
 	cmdBuilder strings.Builder
 	pos        int
 }
@@ -49,11 +54,10 @@ func (p *Parser) Parse(str string) (*CIntstruction, error) {
 	p.pos = 0
 
 	setter := p.setComp
-Loop:
 	for {
 		rv, _, err := p.rReader.ReadRune()
 		if err != nil {
-			break Loop
+			break
 		}
 		p.pos++
 
@@ -65,10 +69,6 @@ Loop:
 			setter = p.setJump
 		case rv == inlineCommentDelim:
 			err = p.parseComment()
-			if err != nil {
-				return nil, err
-			}
-			break Loop
 		case !unicode.IsSpace(rv):
 			p.cmdBuilder.WriteRune(rv)
 		}
@@ -122,5 +122,7 @@ func (p *Parser) parseComment() error {
 	if nextSlash != inlineCommentDelim || err != nil {
 		return &ParseError{Pos: p.pos, Msg: "Expected '/' for the inline comment"}
 	}
+	// skip the rest of string to the end, i.e. we just ignore the comment
+	p.rReader.Seek(0, io.SeekEnd)
 	return nil
 }
