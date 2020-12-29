@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -9,14 +10,27 @@ type testCase struct {
 	want     CIntstruction
 }
 
-func (tC *testCase) Run(t *testing.T) {
+func (tC *testCase) Run(p *Parser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
-		actual, err := ParseCInstrunction(tC.operator)
+		actual, err := p.Parse(tC.operator)
 		if err != nil {
 			t.Errorf("Exception from function: %w", err)
 		}
 		if *actual != tC.want {
 			t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
+		}
+	})
+}
+
+func (tC *testCase) RunParseError(p *Parser, t *testing.T) {
+	t.Run(tC.operator, func(t *testing.T) {
+		actual, err := p.Parse(tC.operator)
+		if err == nil {
+			t.Errorf("Error was not arisen as expected. Actual: %+v", actual)
+		}
+		var pe *ParseError
+		if !errors.As(err, &pe) {
+			t.Errorf("Error was arisen, but it is not ParseError: %v", err)
 		}
 	})
 }
@@ -53,8 +67,9 @@ func TestParseCInstructionRegular(t *testing.T) {
 		},
 	}
 
+	p := NewParser()
 	for _, tC := range testCases {
-		tC.Run(t)
+		tC.Run(p, t)
 	}
 }
 
@@ -83,8 +98,9 @@ func TestParseCInstructionSpaces(t *testing.T) {
 		},
 	}
 
+	p := NewParser()
 	for _, tC := range testCases {
-		tC.Run(t)
+		tC.Run(p, t)
 	}
 }
 
@@ -95,6 +111,10 @@ func TestParseCInstructionComment(t *testing.T) {
 			want:     CIntstruction{Comp: "D"},
 		},
 		{
+			operator: "D//Comment ",
+			want:     CIntstruction{Comp: "D"},
+		},
+		{
 			operator: "D=A+D  //Long Comment",
 			want:     CIntstruction{Dest: "D", Comp: "A+D"},
 		},
@@ -102,9 +122,27 @@ func TestParseCInstructionComment(t *testing.T) {
 			operator: "D=D+1;JMP // Comment ",
 			want:     CIntstruction{Dest: "D", Comp: "D+1", Jump: "JMP"},
 		},
+		{
+			operator: "D=D+1;JMP /// Comment ",
+			want:     CIntstruction{Dest: "D", Comp: "D+1", Jump: "JMP"},
+		},
 	}
 
+	p := NewParser()
 	for _, tC := range testCases {
-		tC.Run(t)
+		tC.Run(p, t)
+	}
+}
+
+func TestParseCInstructionCommentFail(t *testing.T) {
+	testCases := []testCase{
+		{
+			operator: "D / Wrong comment",
+		},
+	}
+
+	p := NewParser()
+	for _, tC := range testCases {
+		tC.RunParseError(p, t)
 	}
 }
