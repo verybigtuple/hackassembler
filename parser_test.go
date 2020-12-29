@@ -126,6 +126,10 @@ func TestParseCInstructionComment(t *testing.T) {
 			operator: "D=D+1;JMP /// Comment ",
 			want:     CIntstruction{Dest: "D", Comp: "D+1", Jump: "JMP"},
 		},
+		{
+			operator: "// D=D+1;JMP",
+			want:     CIntstruction{},
+		},
 	}
 
 	p := NewParser()
@@ -138,6 +142,34 @@ func TestParseCInstructionCommentFail(t *testing.T) {
 	testCases := []testCase{
 		{
 			operator: "D / Wrong comment",
+		},
+	}
+
+	p := NewParser()
+	for _, tC := range testCases {
+		tC.RunParseError(p, t)
+	}
+}
+
+func TestParseCInstructionWrongStruct(t *testing.T) {
+	testCases := []testCase{
+		{
+			operator: "D=",
+		},
+		{
+			operator: ";JMP",
+		},
+		{
+			operator: ";JMP //Comment",
+		},
+		{
+			operator: "D+1;",
+		},
+		{
+			operator: "=",
+		},
+		{
+			operator: "=;D",
 		},
 	}
 

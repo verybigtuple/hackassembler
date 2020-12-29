@@ -79,11 +79,9 @@ func (p *Parser) Parse(str string) (*CIntstruction, error) {
 
 	}
 
-	if p.cmdBuilder.Len() > 0 {
-		err := setter()
-		if err != nil {
-			return nil, err
-		}
+	err := setter()
+	if err != nil {
+		return nil, err
 	}
 
 	return &p.cInstr, nil
@@ -99,7 +97,7 @@ func (p *Parser) setDest() error {
 }
 
 func (p *Parser) setComp() error {
-	if p.cmdBuilder.Len() == 0 && p.cInstr.Dest == "" {
+	if p.cmdBuilder.Len() == 0 && p.cInstr.Dest != "" {
 		return &ParseError{Pos: p.pos, Msg: "Computation operator absent after Destination"}
 	}
 	p.cInstr.Comp = p.cmdBuilder.String()
@@ -110,6 +108,9 @@ func (p *Parser) setComp() error {
 func (p *Parser) setJump() error {
 	if p.cmdBuilder.Len() == 0 {
 		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Jump must be be set up after '%v'", jumpDelim)}
+	}
+	if p.cInstr.Comp == "" {
+		return &ParseError{Pos: p.pos, Msg: "Computation absent before Jump"}
 	}
 	p.cInstr.Jump = p.cmdBuilder.String()
 	p.cmdBuilder.Reset()
