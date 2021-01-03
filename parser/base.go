@@ -2,6 +2,11 @@ package parser
 
 import "fmt"
 
+//Parser interface
+type Parser interface {
+	Parse(s string) (interface{}, error)
+}
+
 //ParseError implements error arisen while parsing
 type ParseError struct {
 	Pos int
