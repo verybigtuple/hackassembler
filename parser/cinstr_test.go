@@ -10,7 +10,7 @@ type testCase struct {
 	want     CIntstruction
 }
 
-func (tC *testCase) Run(p *cParser, t *testing.T) {
+func (tC *testCase) Run(p *CParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err != nil {
@@ -22,7 +22,7 @@ func (tC *testCase) Run(p *cParser, t *testing.T) {
 	})
 }
 
-func (tC *testCase) RunParseError(p *cParser, t *testing.T) {
+func (tC *testCase) RunParseError(p *CParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err == nil {

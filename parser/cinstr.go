@@ -20,25 +20,28 @@ type CIntstruction struct {
 	Jump string
 }
 
-type RuneReadSeeker interface {
+type runeReadSeeker interface {
 	io.RuneReader
 	io.Seeker
 }
 
-type cParser struct {
+//CParser for parsing C-Instructions. Implements Prser intrface
+type CParser struct {
 	cInstr     CIntstruction
-	rReader    RuneReadSeeker
+	rReader    runeReadSeeker
 	cmdBuilder strings.Builder
 	pos        int
 }
 
-func NewCParser() *cParser {
-	p := cParser{cmdBuilder: strings.Builder{}}
+//NewCParser returns ptr to a new CParser
+func NewCParser() *CParser {
+	p := CParser{cmdBuilder: strings.Builder{}}
 	p.cmdBuilder.Grow(3)
 	return &p
 }
 
-func (p *cParser) Parse(str string) (*CIntstruction, error) {
+//Parse reurns parsed CInstruction from a line of code or an error
+func (p *CParser) Parse(str string) (*CIntstruction, error) {
 	p.cInstr = CIntstruction{}
 	p.rReader = strings.NewReader(str)
 	p.cmdBuilder.Reset()
@@ -78,7 +81,7 @@ func (p *cParser) Parse(str string) (*CIntstruction, error) {
 	return &p.cInstr, nil
 }
 
-func (p *cParser) setDest() error {
+func (p *CParser) setDest() error {
 	if p.cmdBuilder.Len() == 0 {
 		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Dest must be set up before '%v'", compDelim)}
 	}
@@ -87,7 +90,7 @@ func (p *cParser) setDest() error {
 	return nil
 }
 
-func (p *cParser) setComp() error {
+func (p *CParser) setComp() error {
 	if p.cmdBuilder.Len() == 0 && p.cInstr.Dest != "" {
 		return &ParseError{Pos: p.pos, Msg: "Computation operator absent after Destination"}
 	}
@@ -96,7 +99,7 @@ func (p *cParser) setComp() error {
 	return nil
 }
 
-func (p *cParser) setJump() error {
+func (p *CParser) setJump() error {
 	if p.cmdBuilder.Len() == 0 {
 		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Jump must be be set up after '%v'", jumpDelim)}
 	}
@@ -108,7 +111,7 @@ func (p *cParser) setJump() error {
 	return nil
 }
 
-func (p *cParser) parseComment() error {
+func (p *CParser) parseComment() error {
 	// checking the next slash
 	nextSlash, _, err := p.rReader.ReadRune()
 	if nextSlash != inlineCommentDelim || err != nil {
