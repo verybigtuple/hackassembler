@@ -10,7 +10,7 @@ type testCase struct {
 	want     CIntstruction
 }
 
-func (tC *testCase) Run(p *Parser, t *testing.T) {
+func (tC *testCase) Run(p *cParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err != nil {
@@ -22,7 +22,7 @@ func (tC *testCase) Run(p *Parser, t *testing.T) {
 	})
 }
 
-func (tC *testCase) RunParseError(p *Parser, t *testing.T) {
+func (tC *testCase) RunParseError(p *cParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err == nil {
@@ -67,7 +67,7 @@ func TestParseCInstructionRegular(t *testing.T) {
 		},
 	}
 
-	p := NewParser()
+	p := NewCParser()
 	for _, tC := range testCases {
 		tC.Run(p, t)
 	}
@@ -98,7 +98,7 @@ func TestParseCInstructionSpaces(t *testing.T) {
 		},
 	}
 
-	p := NewParser()
+	p := NewCParser()
 	for _, tC := range testCases {
 		tC.Run(p, t)
 	}
@@ -132,7 +132,7 @@ func TestParseCInstructionComment(t *testing.T) {
 		},
 	}
 
-	p := NewParser()
+	p := NewCParser()
 	for _, tC := range testCases {
 		tC.Run(p, t)
 	}
@@ -145,7 +145,7 @@ func TestParseCInstructionCommentFail(t *testing.T) {
 		},
 	}
 
-	p := NewParser()
+	p := NewCParser()
 	for _, tC := range testCases {
 		tC.RunParseError(p, t)
 	}
@@ -173,7 +173,7 @@ func TestParseCInstructionWrongStruct(t *testing.T) {
 		},
 	}
 
-	p := NewParser()
+	p := NewCParser()
 	for _, tC := range testCases {
 		tC.RunParseError(p, t)
 	}

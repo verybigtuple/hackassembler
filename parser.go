@@ -34,20 +34,20 @@ type RuneReadSeeker interface {
 	io.Seeker
 }
 
-type Parser struct {
+type cParser struct {
 	cInstr     CIntstruction
 	rReader    RuneReadSeeker
 	cmdBuilder strings.Builder
 	pos        int
 }
 
-func NewParser() *Parser {
-	p := Parser{cmdBuilder: strings.Builder{}}
+func NewCParser() *cParser {
+	p := cParser{cmdBuilder: strings.Builder{}}
 	p.cmdBuilder.Grow(3)
 	return &p
 }
 
-func (p *Parser) Parse(str string) (*CIntstruction, error) {
+func (p *cParser) Parse(str string) (*CIntstruction, error) {
 	p.cInstr = CIntstruction{}
 	p.rReader = strings.NewReader(str)
 	p.cmdBuilder.Reset()
@@ -87,7 +87,7 @@ func (p *Parser) Parse(str string) (*CIntstruction, error) {
 	return &p.cInstr, nil
 }
 
-func (p *Parser) setDest() error {
+func (p *cParser) setDest() error {
 	if p.cmdBuilder.Len() == 0 {
 		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Dest must be set up before '%v'", compDelim)}
 	}
@@ -96,7 +96,7 @@ func (p *Parser) setDest() error {
 	return nil
 }
 
-func (p *Parser) setComp() error {
+func (p *cParser) setComp() error {
 	if p.cmdBuilder.Len() == 0 && p.cInstr.Dest != "" {
 		return &ParseError{Pos: p.pos, Msg: "Computation operator absent after Destination"}
 	}
@@ -105,7 +105,7 @@ func (p *Parser) setComp() error {
 	return nil
 }
 
-func (p *Parser) setJump() error {
+func (p *cParser) setJump() error {
 	if p.cmdBuilder.Len() == 0 {
 		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Jump must be be set up after '%v'", jumpDelim)}
 	}
@@ -117,7 +117,7 @@ func (p *Parser) setJump() error {
 	return nil
 }
 
-func (p *Parser) parseComment() error {
+func (p *cParser) parseComment() error {
 	// checking the next slash
 	nextSlash, _, err := p.rReader.ReadRune()
 	if nextSlash != inlineCommentDelim || err != nil {
