@@ -13,15 +13,6 @@ const (
 	inlineCommentDelim = '/'
 )
 
-type ParseError struct {
-	Pos int
-	Msg string
-}
-
-func (e *ParseError) Error() string {
-	return fmt.Sprintf("Position %d: %s", e.Pos, e.Msg)
-}
-
 // CIntstruction parsed into 3 parts
 type CIntstruction struct {
 	Dest string
