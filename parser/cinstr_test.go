@@ -14,7 +14,8 @@ func (tC *testCase) Run(p *CParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err != nil {
-			t.Errorf("Exception from function: %w", err)
+			t.Errorf("The test returned an exception: %v", err)
+			return
 		}
 		if *actual != tC.want {
 			t.Errorf("Parsed: %+v ; want %+v", *actual, tC.want)
@@ -26,7 +27,8 @@ func (tC *testCase) RunParseError(p *CParser, t *testing.T) {
 	t.Run(tC.operator, func(t *testing.T) {
 		actual, err := p.Parse(tC.operator)
 		if err == nil {
-			t.Errorf("Error was not arisen as expected. Actual: %+v", actual)
+			t.Errorf("Error was not arisen as expected. Actual: %+v", *actual)
+			return
 		}
 		var pe *ParseError
 		if !errors.As(err, &pe) {
