@@ -36,7 +36,7 @@ func (p *AParser) Parse(s string) (*AInstruction, error) {
 	p.strB.Reset()
 
 	p.nextStep = p.checkStart
-	for err := p.nextStep(); !errors.Is(err, eop); err = p.nextStep() {
+	for err := p.nextStep(); !errors.Is(err, errEOP); err = p.nextStep() {
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +48,7 @@ func (p *AParser) Parse(s string) (*AInstruction, error) {
 func (p *AParser) checkStart() error {
 	rv, _, err := p.reader.ReadAfterSpaces()
 	if err != nil {
-		return eop
+		return errEOP
 	}
 
 	if rv != startAInstr {
@@ -84,7 +84,7 @@ func (p *AParser) readNumber() error {
 	for {
 		rv, _, err := p.reader.ReadRune()
 		if err != nil {
-			e = eop
+			e = errEOP
 			break
 		}
 		if unicode.IsSpace(rv) {
@@ -106,7 +106,7 @@ func (p *AParser) readVar() error {
 	for {
 		rv, _, err := p.reader.ReadRune()
 		if err != nil {
-			e = eop
+			e = errEOP
 			break
 		}
 		if unicode.IsSpace(rv) {

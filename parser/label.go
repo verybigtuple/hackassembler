@@ -36,7 +36,7 @@ func (p *LabelParser) Parse(str string) (*Label, error) {
 	p.strB.Reset()
 
 	p.nextStep = p.checkStart
-	for err := p.nextStep(); !errors.Is(err, eop); err = p.nextStep() {
+	for err := p.nextStep(); !errors.Is(err, errEOP); err = p.nextStep() {
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +48,7 @@ func (p *LabelParser) Parse(str string) (*Label, error) {
 func (p *LabelParser) checkStart() error {
 	rv, _, err := p.reader.ReadAfterSpaces()
 	if err != nil {
-		return eop
+		return errEOP
 	}
 	if rv != startLabel {
 		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected start of label '%c'", rv)}

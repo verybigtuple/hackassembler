@@ -24,7 +24,8 @@ func (e *ParseError) Error() string {
 	return fmt.Sprintf("Parsing error at position %d: %s", e.Pos, e.Msg)
 }
 
-var eop error = errors.New("EOP")
+//Special error to stop state machine
+var errEOP error = errors.New("EOP")
 
 type pRuneReader struct {
 	reader *strings.Reader
@@ -56,7 +57,7 @@ func (rR *pRuneReader) ReadAfterSpaces() (rune, int, error) {
 func checkInlineComment(r *pRuneReader) error {
 	rv, _, err := r.ReadAfterSpaces()
 	if err != nil {
-		return eop
+		return errEOP
 	}
 
 	if rv != commentLiteral {
@@ -70,5 +71,5 @@ func checkInlineComment(r *pRuneReader) error {
 	if nrv != commentLiteral {
 		return &ParseError{Pos: r.Pos, Msg: fmt.Sprintf("Unexpected character '%c'", rv)}
 	}
-	return eop
+	return errEOP
 }
