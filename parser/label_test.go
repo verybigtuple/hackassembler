@@ -60,6 +60,10 @@ func TestParseLabelRegular(t *testing.T) {
 			operator: "(lab1) //Comment",
 			want:     Label("lab1"),
 		},
+		{
+			operator: "(lab1)//Comment",
+			want:     Label("lab1"),
+		},
 	}
 
 	p := NewLabelParser()

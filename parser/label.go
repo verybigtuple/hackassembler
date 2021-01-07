@@ -12,8 +12,10 @@ const (
 	endLabel   = ')'
 )
 
+// Label contains a single string that represents HackAssembler Label
 type Label string
 
+// LabelParser for Label
 type LabelParser struct {
 	label    Label
 	reader   *pRuneReader
@@ -21,12 +23,14 @@ type LabelParser struct {
 	strB     strings.Builder
 }
 
+// NewLabelParser returns a pointer to a new LabelParser
 func NewLabelParser() *LabelParser {
 	lp := LabelParser{strB: strings.Builder{}}
 	lp.strB.Grow(15)
 	return &lp
 }
 
+// Parse returns a label parsed from Label or an error
 func (p *LabelParser) Parse(str string) (*Label, error) {
 	p.reader = newPRuneReader(str)
 	p.strB.Reset()
@@ -93,24 +97,5 @@ func (p *LabelParser) readRest() error {
 }
 
 func (p *LabelParser) checkTail() error {
-	for {
-		rv, _, err := p.reader.ReadRune()
-		if err != nil {
-			return eop
-		}
-
-		switch {
-		case rv == '/':
-			nrv, _, err := p.reader.ReadRune()
-			if err != nil {
-				return &ParseError{Pos: p.reader.Pos, Msg: "Unexpected character /"}
-			}
-			if nrv != '/' {
-				return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character '%v'", rv)}
-			}
-			return eop
-		case !unicode.IsSpace(rv):
-			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character '%v'", rv)}
-		}
-	}
+	return checkInlineComment(p.reader)
 }
