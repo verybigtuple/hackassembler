@@ -12,8 +12,6 @@ const (
 	endLabel   = ')'
 )
 
-var EOP error = errors.New("EOP")
-
 type Label string
 
 type LabelParser struct {
@@ -34,7 +32,7 @@ func (p *LabelParser) Parse(str string) (*Label, error) {
 	p.strB.Reset()
 
 	p.nextStep = p.checkStart
-	for err := p.nextStep(); !errors.Is(err, EOP); err = p.nextStep() {
+	for err := p.nextStep(); !errors.Is(err, eop); err = p.nextStep() {
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +44,7 @@ func (p *LabelParser) Parse(str string) (*Label, error) {
 func (p *LabelParser) checkStart() error {
 	rv, _, err := p.reader.ReadAfterSpaces()
 	if err != nil {
-		return EOP
+		return eop
 	}
 	if rv != startLabel {
 		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected start of label '%c'", rv)}
@@ -98,7 +96,7 @@ func (p *LabelParser) checkTail() error {
 	for {
 		rv, _, err := p.reader.ReadRune()
 		if err != nil {
-			return EOP
+			return eop
 		}
 
 		switch {
@@ -110,7 +108,7 @@ func (p *LabelParser) checkTail() error {
 			if nrv != '/' {
 				return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character '%v'", rv)}
 			}
-			return EOP
+			return eop
 		case !unicode.IsSpace(rv):
 			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character '%v'", rv)}
 		}

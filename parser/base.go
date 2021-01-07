@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"unicode"
@@ -20,6 +21,8 @@ type ParseError struct {
 func (e *ParseError) Error() string {
 	return fmt.Sprintf("Parsing error at position %d: %s", e.Pos, e.Msg)
 }
+
+var eop error = errors.New("EOP")
 
 type pRuneReader struct {
 	reader *strings.Reader
