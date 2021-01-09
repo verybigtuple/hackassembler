@@ -113,7 +113,7 @@ func (p *AParser) readVar() error {
 			p.nextStep = p.readComment
 			break
 		}
-		if !unicode.IsLetter(rv) && !unicode.IsDigit(rv) && rv != '_' && rv != '.' {
+		if !unicode.IsLetter(rv) && !unicode.IsDigit(rv) && rv != '_' && rv != '.' && rv != '$' {
 			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character in A-Instruction '%c'", rv)}
 		}
 		p.strB.WriteRune(rv)
