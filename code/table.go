@@ -38,7 +38,13 @@ type SymbolTable struct {
 
 // NewSymbolTable creates a new SymbolTable and init it with predefined vars
 func NewSymbolTable() *SymbolTable {
-	vt := SymbolTable{Table: initTable, UserRegister: minUserRAM}
+	// Copying initTable
+	newTable := make(map[string]int, len(initTable))
+	for k, v := range initTable {
+		newTable[k] = v
+	}
+
+	vt := SymbolTable{Table: newTable, UserRegister: minUserRAM}
 	return &vt
 }
 
