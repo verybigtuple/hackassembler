@@ -64,7 +64,7 @@ func (p *LabelParser) checkFirst() error {
 		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabel)}
 	}
 
-	if !unicode.IsLetter(rv) {
+	if !unicode.IsLetter(rv) && rv != '_' {
 		return &ParseError{
 			Pos: p.reader.Pos,
 			Msg: fmt.Sprintf("Unexpected character '%v': Label must begin with a letter", rv),

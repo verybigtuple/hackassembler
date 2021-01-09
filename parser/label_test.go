@@ -44,6 +44,10 @@ func TestParseLabelRegular(t *testing.T) {
 			want:     Label("LABEL"),
 		},
 		{
+			operator: "(_LABEL_1)",
+			want:     Label("_LABEL_1"),
+		},
+		{
 			operator: " (LABEL)  ",
 			want:     Label("LABEL"),
 		},

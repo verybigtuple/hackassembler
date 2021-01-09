@@ -60,6 +60,10 @@ func TestAParseRegular(t *testing.T) {
 			want:     AInstruction{IsVar: true, Value: "i"},
 		},
 		{
+			operator: "@_i_1",
+			want:     AInstruction{IsVar: true, Value: "_i_1"},
+		},
+		{
 			operator: "@variable1",
 			want:     AInstruction{IsVar: true, Value: "variable1"},
 		},
@@ -104,9 +108,6 @@ func TestAParseError(t *testing.T) {
 		},
 		{
 			operator: "@A B",
-		},
-		{
-			operator: "@A_B",
 		},
 		{
 			operator: "@A /B",
