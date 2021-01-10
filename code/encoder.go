@@ -68,15 +68,17 @@ var cmpTable = map[string]string{
 	"D|M": "1" + "010" + "101",
 }
 
-// EncodeNumber returns 15 bit as string. If argument is less than zero
+// encodeNumber returns 15 bit as string. If argument is less than zero
 // or more than 2^15-1, it returns error
-func EncodeNumber(n int) (string, error) {
+func encodeNumber(n int) (string, error) {
 	if n < minInt || n > maxInt {
 		return "", &EncoderError{Msg: fmt.Sprintf("Cannot decode %v as it is out of bound", n)}
 	}
 	return fmt.Sprintf("%015b", n), nil
 }
 
+// EncodeAInstr returns string binary (as specified) of A-Instruction. If A-Intruction is a new var,
+//  it will be added to SymbolTable
 func EncodeAInstr(ai parser.AInstruction, st *SymbolTable) (string, error) {
 	var n int
 	var err error
@@ -104,13 +106,15 @@ func EncodeAInstr(ai parser.AInstruction, st *SymbolTable) (string, error) {
 		return "", err
 	}
 
-	sn, err := EncodeNumber(n)
+	sn, err := encodeNumber(n)
 	if err != nil {
 		return "", err
 	}
 	return ainstrPrefix + sn, nil
 }
 
+// EncodeCInstr returns string binary (as specified) of C-Instruction according
+// to the language specification.
 func EncodeCInstr(ci parser.CIntstruction) (string, error) {
 	var err error
 	var encDest, encComp, encJmp string

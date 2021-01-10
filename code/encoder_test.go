@@ -73,7 +73,7 @@ func TestDecodeNumberRegular(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Arg %v", tc.arg), func(t *testing.T) {
-			actual, err := EncodeNumber(tc.arg)
+			actual, err := encodeNumber(tc.arg)
 			if err != nil {
 				t.Errorf("EncodeNumber returned unexpected error: %v", err)
 				return
@@ -94,7 +94,7 @@ func TestEncodeNumberError(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Arg %v", tc), func(t *testing.T) {
-			actual, err := EncodeNumber(tc)
+			actual, err := encodeNumber(tc)
 			de := &EncoderError{}
 			if err != nil && !errors.As(err, &de) {
 				t.Errorf("EncodeNumber retuned unexpected error type: %v", err)
