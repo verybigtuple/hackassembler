@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -35,6 +36,17 @@ func IsCommentLine(line string) bool {
 //Parser interface
 type Parser interface {
 	Parse(s string) (*interface{}, error)
+}
+
+// Symbols that are ok for Label/A-Instruction body,
+// i.e @a.name or (LABEL_A$SOME) are ok
+var varSymbolSpecCase = map[rune]bool{'_': true, '.': true, '$': true}
+
+// isVarRune returns true if rune can be a rune of a variable name or a lebel name.
+// It cannot be applicable for the first rune
+func isVarRune(r rune) bool {
+	_, ok := varSymbolSpecCase[r]
+	return unicode.IsLetter(r) || unicode.IsDigit(r) || ok
 }
 
 func checkInlineComment(r *pRuneReader) error {

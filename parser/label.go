@@ -83,8 +83,8 @@ func (p *LabelParser) readRest() error {
 			return nil
 		}
 
-		if unicode.IsSpace(rv) {
-			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label cannot has spaces")}
+		if !isVarRune(rv) {
+			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected character '%c' in Label", rv)}
 		}
 
 		p.strB.WriteRune(rv)
