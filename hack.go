@@ -2,7 +2,10 @@ package main
 
 import (
 	"bufio"
+	"flag"
+	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/verybigtuple/hackassembler/code"
@@ -11,6 +14,12 @@ import (
 
 const (
 	initCodeSize = 1000
+
+	// Exit Codes
+	parserError = -1
+	codeError   = -2
+	fileError   = -3
+	otherError  = -99
 )
 
 func clearLine(s string) string {
@@ -131,29 +140,60 @@ func run(in *bufio.Reader, out *bufio.Writer) error {
 }
 
 func main() {
-	if len(os.Args) < 3 {
-		panic("Not enough args")
+	inFileFlag := flag.String("in", "", "Input file with hack assembler. Usually has extension *.asm")
+	outFileFlag := flag.String("out", "", "Output file with binary code. Usually a file *.hack")
+
+	flag.Parse()
+
+	if *inFileFlag == "" {
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Input file is not set", *inFileFlag))
+		os.Exit(fileError)
 	}
 
-	inFilePath := os.Args[1]
-	outFile := os.Args[2]
+	if *outFileFlag == "" {
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Output file is not set", *inFileFlag))
+		os.Exit(fileError)
+	}
 
-	inF, err := os.OpenFile(inFilePath, os.O_RDONLY, 0666)
+	if _, err := os.Stat(*inFileFlag); os.IsNotExist(err) {
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Input file %s is not found", *inFileFlag))
+		os.Exit(fileError)
+	}
+
+	inF, err := os.OpenFile(*inFileFlag, os.O_RDONLY, os.ModePerm)
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Cannot open input file: %v", err))
+		os.Exit(fileError)
 	}
 	defer inF.Close()
-	inReader := bufio.NewReader(inF)
 
-	outF, err := os.OpenFile(outFile, os.O_WRONLY|os.O_CREATE, 0666)
+	outParentDir := filepath.Dir(*outFileFlag)
+	if err := os.MkdirAll(outParentDir, os.ModePerm); err != nil {
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Cannot create dir %s: %v", outParentDir, err))
+		os.Exit(fileError)
+	}
+
+	outF, err := os.OpenFile(*outFileFlag, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("Cannot open output file: %v", err))
+		os.Exit(fileError)
 	}
 	defer outF.Close()
-	outWriter := bufio.NewWriter(outF)
 
+	inReader := bufio.NewReader(inF)
+	outWriter := bufio.NewWriter(outF)
 	err = run(inReader, outWriter)
 	if err != nil {
-		panic(err)
+		switch e := err.(type) {
+		case *parser.ParseError:
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Parsing Error: %v", e))
+			os.Exit(parserError)
+		case *code.EncoderError:
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Encoding Error: %v", e))
+			os.Exit(codeError)
+		default:
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Unknown Error: %v", e))
+			os.Exit(otherError)
+		}
 	}
 }
