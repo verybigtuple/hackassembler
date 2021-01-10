@@ -41,36 +41,36 @@ func TestParseLabelRegular(t *testing.T) {
 	testCases := []labelTestCase{
 		{
 			operator: "(LABEL)",
-			want:     Label("LABEL"),
+			want:     Label{"LABEL"},
 		},
 		{
 			operator: "(_LABEL_1)",
-			want:     Label("_LABEL_1"),
+			want:     Label{"_LABEL_1"},
 		},
 		{
 			operator: "(LABEL.1)",
-			want:     Label("LABEL.1"),
+			want:     Label{"LABEL.1"},
 		},
 		{
 			operator: " (LABEL)  ",
-			want:     Label("LABEL"),
+			want:     Label{"LABEL"},
 		},
 		{
 			operator: "(L1)",
-			want:     Label("L1"),
+			want:     Label{"L1"},
 		},
 		{
 			operator: "(lab1)",
-			want:     Label("lab1"),
+			want:     Label{"lab1"},
 		},
 
 		{
 			operator: "(lab1) //Comment",
-			want:     Label("lab1"),
+			want:     Label{"lab1"},
 		},
 		{
 			operator: "(lab1)//Comment",
-			want:     Label("lab1"),
+			want:     Label{"lab1"},
 		},
 	}
 

@@ -8,7 +8,9 @@ import (
 )
 
 // Label contains a single string that represents HackAssembler Label
-type Label string
+type Label struct {
+	Value string
+}
 
 // LabelParser for Label
 type LabelParser struct {
@@ -78,7 +80,7 @@ func (p *LabelParser) readRest() error {
 		}
 
 		if rv == endLabelLiteral {
-			p.label = Label(p.strB.String())
+			p.label = Label{p.strB.String()}
 			p.nextStep = p.checkTail
 			return nil
 		}

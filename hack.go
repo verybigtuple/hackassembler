@@ -69,7 +69,7 @@ func readAsmCode(in *bufio.Reader, st *code.SymbolTable) ([]string, error) {
 			if err != nil {
 				return nil, err
 			}
-			st.AddLabel(string(*label), romCount)
+			st.AddLabel(label.Value, romCount)
 		} else {
 			asmLines = append(asmLines, line)
 			// asmLines[romCount] = line
