@@ -10,6 +10,9 @@ import (
 const (
 	minInt = 0
 	maxInt = 32767
+
+	ainstrPrefix = "0"
+	cinstrPrefix = "111"
 )
 
 var destTable = map[string]string{
@@ -112,7 +115,7 @@ func EncodeAInstr(ai parser.AInstruction, st *SymbolTable) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "0" + sn, nil
+	return ainstrPrefix + sn, nil
 }
 
 func EncodeCInstr(ci parser.CIntstruction) (string, error) {
@@ -137,5 +140,5 @@ func EncodeCInstr(ci parser.CIntstruction) (string, error) {
 		return "", err
 	}
 
-	return "111" + encComp + encDest + encJmp, nil
+	return cinstrPrefix + encComp + encDest + encJmp, nil
 }
