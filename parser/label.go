@@ -56,13 +56,13 @@ func (p *LabelParser) checkStart() error {
 func (p *LabelParser) checkFirst() error {
 	rv, _, err := p.reader.ReadRune()
 	if err != nil {
-		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabelLiteral)}
+		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%c'", endLabelLiteral)}
 	}
 
 	if !unicode.IsLetter(rv) && rv != '_' {
 		return &ParseError{
 			Pos: p.reader.Pos,
-			Msg: fmt.Sprintf("Unexpected character '%v': Label must begin with a letter", rv),
+			Msg: fmt.Sprintf("Unexpected character '%c': Label must begin with a letter", rv),
 		}
 	}
 	p.strB.WriteRune(rv)
@@ -74,7 +74,7 @@ func (p *LabelParser) readRest() error {
 	for {
 		rv, _, err := p.reader.ReadRune()
 		if err != nil {
-			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabelLiteral)}
+			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%c'", endLabelLiteral)}
 		}
 
 		if rv == endLabelLiteral {

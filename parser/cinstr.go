@@ -77,7 +77,7 @@ func (p *CParser) Parse(str string) (*CIntstruction, error) {
 
 func (p *CParser) setDest() error {
 	if p.cmdBuilder.Len() == 0 {
-		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Dest must be set up before '%v'", compDelim)}
+		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Dest must be set up before '%c'", compDelim)}
 	}
 	p.cInstr.Dest = p.cmdBuilder.String()
 	p.cmdBuilder.Reset()
@@ -95,7 +95,7 @@ func (p *CParser) setComp() error {
 
 func (p *CParser) setJump() error {
 	if p.cmdBuilder.Len() == 0 {
-		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Jump must be be set up after '%v'", jumpDelim)}
+		return &ParseError{Pos: p.pos, Msg: fmt.Sprintf("Jump must be be set up after '%c'", jumpDelim)}
 	}
 	if p.cInstr.Comp == "" {
 		return &ParseError{Pos: p.pos, Msg: "Computation absent before Jump"}
