@@ -68,13 +68,6 @@ var cmpTable = map[string]string{
 	"D|M": "1" + "010" + "101",
 }
 
-//EncoderError is error returned by any decoder function
-type EncoderError struct {
-	Msg string
-}
-
-func (e *EncoderError) Error() string { return e.Msg }
-
 // EncodeNumber returns 15 bit as string. If argument is less than zero
 // or more than 2^15-1, it returns error
 func EncodeNumber(n int) (string, error) {
