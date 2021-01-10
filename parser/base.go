@@ -3,8 +3,6 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"unicode"
 )
 
 const commentLiteral = '/'
@@ -26,33 +24,6 @@ func (e *ParseError) Error() string {
 
 //Special error to stop state machine
 var errEOP error = errors.New("EOP")
-
-type pRuneReader struct {
-	reader *strings.Reader
-	Pos    int
-}
-
-func newPRuneReader(s string) *pRuneReader {
-	rr := pRuneReader{reader: strings.NewReader(s)}
-	return &rr
-}
-
-func (rR *pRuneReader) ReadRune() (rune, int, error) {
-	r, s, err := rR.reader.ReadRune()
-	if err == nil {
-		rR.Pos++
-	}
-	return r, s, err
-}
-
-func (rR *pRuneReader) ReadAfterSpaces() (rune, int, error) {
-	for {
-		rv, s, err := rR.ReadRune()
-		if !unicode.IsSpace(rv) || err != nil {
-			return rv, s, err
-		}
-	}
-}
 
 func checkInlineComment(r *pRuneReader) error {
 	rv, _, err := r.ReadAfterSpaces()
