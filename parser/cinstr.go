@@ -7,12 +7,6 @@ import (
 	"unicode"
 )
 
-const (
-	compDelim          = '='
-	jumpDelim          = ';'
-	inlineCommentDelim = '/'
-)
-
 // CIntstruction parsed into 3 parts
 type CIntstruction struct {
 	Dest string
@@ -61,7 +55,7 @@ func (p *CParser) Parse(str string) (*CIntstruction, error) {
 		case rv == jumpDelim:
 			err = p.setComp()
 			setter = p.setJump
-		case rv == inlineCommentDelim:
+		case rv == commentLiteral:
 			err = p.parseComment()
 		case !unicode.IsSpace(rv):
 			p.cmdBuilder.WriteRune(rv)
@@ -114,7 +108,7 @@ func (p *CParser) setJump() error {
 func (p *CParser) parseComment() error {
 	// checking the next slash
 	nextSlash, _, err := p.rReader.ReadRune()
-	if nextSlash != inlineCommentDelim || err != nil {
+	if nextSlash != commentLiteral || err != nil {
 		return &ParseError{Pos: p.pos, Msg: "Expected '/' for the inline comment"}
 	}
 	// skip the rest of string to the end, i.e. we just ignore the comment

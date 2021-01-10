@@ -4,7 +4,17 @@ import (
 	"fmt"
 )
 
-const commentLiteral = '/'
+const (
+	ainstrLiteral     = '@'
+	startLabelLiteral = '('
+	endLabelLiteral   = ')'
+
+	compDelim = '='
+	jumpDelim = ';'
+
+	commentPrefix  = "//"
+	commentLiteral = '/'
+)
 
 //Parser interface
 type Parser interface {

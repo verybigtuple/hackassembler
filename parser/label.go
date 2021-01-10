@@ -7,11 +7,6 @@ import (
 	"unicode"
 )
 
-const (
-	startLabel = '('
-	endLabel   = ')'
-)
-
 // Label contains a single string that represents HackAssembler Label
 type Label string
 
@@ -50,7 +45,7 @@ func (p *LabelParser) checkStart() error {
 	if err != nil {
 		return errEOP
 	}
-	if rv != startLabel {
+	if rv != startLabelLiteral {
 		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Unexpected start of label '%c'", rv)}
 	}
 
@@ -61,7 +56,7 @@ func (p *LabelParser) checkStart() error {
 func (p *LabelParser) checkFirst() error {
 	rv, _, err := p.reader.ReadRune()
 	if err != nil {
-		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabel)}
+		return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabelLiteral)}
 	}
 
 	if !unicode.IsLetter(rv) && rv != '_' {
@@ -79,10 +74,10 @@ func (p *LabelParser) readRest() error {
 	for {
 		rv, _, err := p.reader.ReadRune()
 		if err != nil {
-			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabel)}
+			return &ParseError{Pos: p.reader.Pos, Msg: fmt.Sprintf("Label should finish with '%v'", endLabelLiteral)}
 		}
 
-		if rv == endLabel {
+		if rv == endLabelLiteral {
 			p.label = Label(p.strB.String())
 			p.nextStep = p.checkTail
 			return nil

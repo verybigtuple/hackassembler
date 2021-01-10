@@ -7,8 +7,6 @@ import (
 	"unicode"
 )
 
-const startAInstr = '@'
-
 //AInstruction of HackAssembler
 type AInstruction struct {
 	IsVar bool
@@ -51,7 +49,7 @@ func (p *AParser) checkStart() error {
 		return errEOP
 	}
 
-	if rv != startAInstr {
+	if rv != ainstrLiteral {
 		return &ParseError{Pos: p.reader.Pos, Msg: "Unexpected start of A-Intruction"}
 	}
 
