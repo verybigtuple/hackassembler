@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -15,6 +16,21 @@ const (
 	commentPrefix  = "//"
 	commentLiteral = '/'
 )
+
+// IsLabelLine returns true if line starts with a label prefix
+func IsLabelLine(line string) bool {
+	return strings.HasPrefix(line, string(startLabelLiteral))
+}
+
+// IsAInstrLine returns true if line starts with an A-Instruction prefix
+func IsAInstrLine(line string) bool {
+	return strings.HasPrefix(line, string(ainstrLiteral))
+}
+
+// IsCommentLine returns true if line starts with a comment Prefix
+func IsCommentLine(line string) bool {
+	return strings.HasPrefix(line, commentPrefix)
+}
 
 //Parser interface
 type Parser interface {

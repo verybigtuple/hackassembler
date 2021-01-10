@@ -43,7 +43,7 @@ func (r *codeReader) readNextCodeLine() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		if len(line) > 0 && !strings.HasPrefix(line, "//") {
+		if len(line) > 0 && !parser.IsCommentLine(line) {
 			return line, nil
 		}
 	}
@@ -64,7 +64,7 @@ func readAsmCode(in *bufio.Reader, st *code.SymbolTable) ([]string, error) {
 			return asmLines, nil
 		}
 
-		if strings.HasPrefix(line, "(") {
+		if parser.IsLabelLine(line) {
 			label, err := labelParser.Parse(line)
 			if err != nil {
 				return nil, err
@@ -84,7 +84,7 @@ func encodeAsm(asmCode []string, st *code.SymbolTable) ([]string, error) {
 	cParser := parser.NewCParser()
 
 	for _, v := range asmCode {
-		if strings.HasPrefix(v, "@") {
+		if parser.IsAInstrLine(v) {
 			//TODO: What the hell?
 			ai, err := aParcer.Parse(v)
 			if err != nil {
